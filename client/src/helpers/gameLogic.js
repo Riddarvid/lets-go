@@ -8,9 +8,14 @@ class GameLogic {
   }
 
   executeMove(squareData, row, column, placedColor) {
+    const linearCoordinate = this.gridToLinear(row, column);
+    //Check if target square is empty.
+    if (squareData[linearCoordinate] !== null) {
+      return null;
+    }
     const opponentColor = getOppositeColor(placedColor);
     const newSquareData = [...squareData];
-    const linearCoordinate = this.gridToLinear(row, column);
+
     //Place the stone
     newSquareData[linearCoordinate] = placedColor;
     //For each stone adjacent to the placed stone, check if that stone belongs to a captured group.
@@ -88,10 +93,18 @@ class GameLogic {
   getNeighbours(linear) {
     const [row, column] = this.linearToGrid(linear);
     const neighbours = [];
-    neighbours.push(this.gridToLinear(row + 1, column));
-    neighbours.push(this.gridToLinear(row - 1, column));
-    neighbours.push(this.gridToLinear(row, column + 1));
-    neighbours.push(this.gridToLinear(row, column - 1));
+    if (row + 1 < this.dimension) {
+      neighbours.push(this.gridToLinear(row + 1, column));
+    }
+    if (row - 1 >= 0) {
+      neighbours.push(this.gridToLinear(row - 1, column));
+    }
+    if (column + 1 < this.dimension) {
+      neighbours.push(this.gridToLinear(row, column + 1));
+    }
+    if (column - 1 >= 0) {
+      neighbours.push(this.gridToLinear(row, column - 1));
+    }
     return neighbours;
   }
 
@@ -102,8 +115,6 @@ class GameLogic {
   gridToLinear(row, column) {
     return row * this.dimension + column;
   }
-
-  hasFreeNeighbour(squareData, row, column) {}
 
   captureStones(squareData, capturedStones) {
     capturedStones.forEach((stone) => {
