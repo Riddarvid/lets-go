@@ -1,7 +1,13 @@
 import { Stack } from "@mui/material";
 import Square from "./Square";
 
-const BoardRow = ({ squareData, rowIndex, onBoardSquareClicked }) => {
+const BoardRow = ({
+  rowIndex,
+  dimension,
+  squareSize,
+  squareData,
+  onBoardSquareClicked,
+}) => {
   const onRowSquareClicked = (columnIndex) => {
     onBoardSquareClicked(rowIndex, columnIndex);
   };
@@ -10,8 +16,11 @@ const BoardRow = ({ squareData, rowIndex, onBoardSquareClicked }) => {
     return (
       <Square
         key={index}
-        color={squareColor}
+        dimension={dimension}
+        squareSize={squareSize}
+        rowIndex={rowIndex}
         columnIndex={index}
+        color={squareColor}
         onClick={onRowSquareClicked}
       />
     );

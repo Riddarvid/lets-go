@@ -2,8 +2,9 @@ import { Box, Stack } from "@mui/material";
 import { useRef, useState } from "react";
 import BoardRow from "./BoardRow";
 import { GameLogic, getOppositeColor } from "../helpers/gameLogic";
+import { pixels } from "../helpers/helpers";
 
-const Board = ({ dimension }) => {
+const Board = ({ dimension, squareSize }) => {
   const [squareData, setSquareData] = useState(
     Array(dimension * dimension).fill(null)
   );
@@ -32,12 +33,14 @@ const Board = ({ dimension }) => {
       boardRows.push(
         <BoardRow
           key={i}
+          rowIndex={i}
+          dimension={dimension}
+          squareSize={squareSize}
           squareData={squareData.slice(
             i * dimension,
             i * dimension + dimension
           )}
           onBoardSquareClicked={onSquareClicked}
-          rowIndex={i}
         />
       );
     }
@@ -48,7 +51,13 @@ const Board = ({ dimension }) => {
 
   return (
     <Box>
-      <Stack sx={{ width: "fit-content", backgroundColor: "brown" }}>
+      <Stack
+        sx={{
+          p: pixels(squareSize / 2),
+          width: "fit-content",
+          backgroundColor: "brown",
+        }}
+      >
         {boardRows}
       </Stack>
     </Box>

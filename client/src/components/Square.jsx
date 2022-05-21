@@ -1,20 +1,32 @@
 import { Box } from "@mui/material";
+import { pixels } from "../helpers/helpers";
+import { getSquare } from "../helpers/squares";
 import Stone from "./Stone";
 
-const squareSize = "45px";
+const Square = ({
+  dimension,
+  squareSize,
+  rowIndex,
+  columnIndex,
+  color,
+  onClick,
+}) => {
+  const square = getSquare(dimension, rowIndex, columnIndex, squareSize);
 
-const Square = ({ color, columnIndex, onClick }) => {
   return (
     <Box
       sx={{
         display: "flex",
-        width: squareSize,
-        height: squareSize,
+        width: pixels(squareSize),
+        height: pixels(squareSize),
+        backgroundImage: square.image,
+        backgroundPosition: square.position,
+        backgroundSize: square.size,
+        backgroundRepeat: square.repeat,
       }}
       onClick={() => onClick(columnIndex)}
       justifyContent="center"
       alignItems="center"
-      border={1}
     >
       <Stone color={color} />
     </Box>
