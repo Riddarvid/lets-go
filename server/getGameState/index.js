@@ -22,7 +22,7 @@ const handler = async (event) => {
   let response;
   try {
     const selectResponse = await client.query(
-      "SELECT * FROM game_state WHERE url=$1",
+      "SELECT squares, turn FROM game_state WHERE url=$1",
       [uuid]
     );
     if (selectResponse.rowCount === 0) {
