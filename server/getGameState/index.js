@@ -1,4 +1,5 @@
 import pg from "pg";
+import crypto from "crypto";
 const { Client } = pg;
 
 //TODO remove credentials
@@ -17,13 +18,24 @@ try {
 }
 
 const handler = async (event) => {
+  const uuid = event.queryStringParameters.uuid;
   let response;
   try {
-    const result = await client.query("SELECT * FROM game_state");
-    response = {
-      statusCode: 200,
-      body: JSON.stringify(result.rows),
-    };
+    const selectResponse = await client.query(
+      "SELECT * FROM game_state WHERE url=$1",
+      [uuid]
+    );
+    if (selectResponse.rowCount === 0) {
+      response = {
+        statusCode: 404,
+        body: JSON.stringify({ error: "No game with matching url found" }),
+      };
+    } else {
+      response = {
+        statusCode: 200,
+        body: JSON.stringify({ gameState: selectResponse.rows[0] }),
+      };
+    }
   } catch (error) {
     console.log(error);
     response = {
