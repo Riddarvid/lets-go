@@ -18,7 +18,7 @@ try {
 
 const handler = async (event) => {
   console.log(event);
-  const uuid = event.queryStringParameters.uuid;
+  const { gameId, color } = JSON.parse(event.body);
   let response;
   try {
     const selectResponse = await client.query(

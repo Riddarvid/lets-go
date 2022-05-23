@@ -29,7 +29,6 @@ class GameLogic {
     });
     //If no stone was captured, check if the placed stone belongs to a captured group.
     //If true, the move is invalid. Return null.
-    console.log(capturedStones);
     if (capturedStones.length === 0) {
       if (
         this.getGroupIfCaptured(newSquareData, linearCoordinate, placedColor)
@@ -62,7 +61,6 @@ class GameLogic {
     discovered.add(linearCoordinate);
     toInvestigate.add(linearCoordinate);
     while (toInvestigate.size > 0) {
-      console.log(toInvestigate);
       const newToInvestigate = new Set();
       //For each in toInvestigate, examine neighbours. If neighbours have not been discovered, check value. If value === null, return []. If value is targetColor, add to toInvestigate.
       let hasFreedom = false;

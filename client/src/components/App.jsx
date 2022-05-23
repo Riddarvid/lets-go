@@ -1,12 +1,15 @@
 import React from "react";
-import Board from "./Board";
+import MultiplayerGame from "./MultiplayerGame";
 import TopBar from "./TopBar";
 
 const App = () => {
   return (
     <React.Fragment>
       <TopBar />
-      <Board dimension={19} squareSize={45} />
+      <MultiplayerGame
+        squareSize={46}
+        gameId="29d9428c-d579-4f73-bd16-b5c02c70590c"
+      />
     </React.Fragment>
   );
 };
