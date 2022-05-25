@@ -19,32 +19,14 @@ try {
 
 const handler = async (event) => {
   const body = JSON.parse(event.body);
-  const dimension = body.dimension;
-  console.log(dimension);
   let response;
   try {
-    let url;
-    while (true) {
-      url = crypto.randomUUID();
-      const selectResponse = await client.query(
-        "SELECT * FROM game_state WHERE url=$1",
-        [url.toString()]
-      );
-      if (selectResponse.rowCount === 0) {
-        console.log("Found unique id");
-        break;
-      }
-    }
-    const squares = Array(dimension * dimension)
-      .fill(0)
-      .join("");
-    await client.query(
-      "INSERT INTO game_state(squares, turn, url) VALUES ($1, 'black', $2)",
-      [squares, url]
-    );
+    const gameId = await createGame(body.dimension);
+    const blackUUID = await createPlayer("black", gameId);
+    const whiteUUID = await createPlayer("white", gameId);
     response = {
       statusCode: 200,
-      body: JSON.stringify({ url: url }),
+      body: JSON.stringify({ blackUUID, whiteUUID }),
     };
   } catch (error) {
     console.log(error);
@@ -55,6 +37,37 @@ const handler = async (event) => {
   } finally {
     return response;
   }
+};
+
+const createGame = async (dimension) => {
+  const squares = Array(dimension * dimension)
+    .fill(0)
+    .join("");
+  const result = await client.query(
+    "INSERT INTO game_state(squares, turn) VALUES ($1, 'black') RETURNING id",
+    [squares]
+  );
+  //Returns the id of the created game
+  return result.rows[0].id;
+};
+
+const createPlayer = async (color, gameId) => {
+  let uuid;
+  while (true) {
+    uuid = crypto.randomUUID();
+    const selectResponse = await client.query(
+      "SELECT * FROM players WHERE uuid=$1",
+      [uuid.toString()]
+    );
+    if (selectResponse.rowCount === 0) {
+      break;
+    }
+  }
+  await client.query(
+    "INSERT INTO players(color, game_state_id, uuid) VALUES ($1, $2, $3)",
+    [color, gameId, uuid]
+  );
+  return uuid;
 };
 
 export { handler };

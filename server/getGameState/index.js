@@ -17,12 +17,11 @@ try {
 }
 
 const handler = async (event) => {
-  console.log(event);
   const uuid = event.queryStringParameters.uuid;
   let response;
   try {
     const selectResponse = await client.query(
-      "SELECT squares, turn, dimension FROM game_state WHERE url=$1",
+      "SELECT squares, turn FROM players LEFT JOIN game_state ON players.game_state_id = game_state.id WHERE uuid = $1",
       [uuid]
     );
     if (selectResponse.rowCount === 0) {

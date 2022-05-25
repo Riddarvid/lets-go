@@ -1,18 +1,20 @@
 import { Stack, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { GameLogic, getOppositeColor } from "../helpers/gameLogic";
 import Board from "./Board";
 
 const backendUrl =
   "https://gqzmvnpow7.execute-api.eu-north-1.amazonaws.com/test";
 
-const MultiplayerGame = ({ squareSize, gameId }) => {
+const MultiplayerGame = ({ squareSize }) => {
+  const { uuid } = useParams();
   const [gameState, setGameState] = useState(null);
   const gameLogic = useRef(null);
 
   useEffect(() => {
     const fetchGameState = async () => {
-      const response = await fetch(backendUrl + "/game?uuid=" + gameId);
+      const response = await fetch(backendUrl + "/game?uuid=" + uuid);
       const result = await response.json();
       console.log(result);
       if (result.gameState) {
@@ -31,10 +33,10 @@ const MultiplayerGame = ({ squareSize, gameId }) => {
         gameLogic.current = new GameLogic(newGameState.dimension);
       }
     };
-    if (gameId) {
+    if (uuid) {
       fetchGameState();
     }
-  }, [gameId]);
+  }, [uuid]);
 
   const onSquareClicked = (row, column) => {
     console.log("Clicked " + row + " " + column);
