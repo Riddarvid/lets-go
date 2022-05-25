@@ -1,6 +1,9 @@
 import pg from "pg";
 const { Client } = pg;
 
+const backendUrl =
+  "https://gqzmvnpow7.execute-api.eu-north-1.amazonaws.com/test";
+
 //TODO remove credentials
 const client = new Client({
   user: "postgres",
@@ -17,38 +20,11 @@ try {
 }
 
 const handler = async (event) => {
-  console.log(event);
-  const { gameId, color } = JSON.parse(event.body);
-  let response;
-  try {
-    const selectResponse = await client.query(
-      "SELECT squares, turn, dimension FROM game_state WHERE url=$1",
-      [uuid]
-    );
-    if (selectResponse.rowCount === 0) {
-      response = {
-        statusCode: 404,
-        body: JSON.stringify({ error: "No game with matching url found" }),
-      };
-    } else {
-      response = {
-        statusCode: 200,
-        body: JSON.stringify({ gameState: selectResponse.rows[0] }),
-      };
-    }
-  } catch (error) {
-    console.log(error);
-    response = {
-      statusCode: 500,
-      body: JSON.stringify("Error executing query"),
-    };
-  } finally {
-    response = {
-      ...response,
-      headers: { "Access-Control-Allow-Origin": "*" },
-    };
-    return response;
-  }
+  const { uuid, row, column } = JSON.parse(event.body);
+  //TODO:
+  //1. Select the correct game state, prefferably using the getGameState lambda
+  //2. Try the move using gameLogic. If the move is valid, insert the new game state into the database. Send a positive response.
+  //3. If the move was invalid, send an error response.
 };
 
 export { handler };

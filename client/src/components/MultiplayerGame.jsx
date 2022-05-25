@@ -37,14 +37,13 @@ const MultiplayerGame = ({ squareSize }) => {
     }
   }, [uuid]);
 
-  const onSquareClicked = (row, column) => {
+  const onSquareClicked = async (row, column) => {
     const newSquareData = gameLogic.current.executeMove(gameState, row, column);
     if (newSquareData !== null) {
       let newGameState = { ...gameState };
       newGameState.squares = newSquareData;
       newGameState.turn = getOppositeColor(gameState.turn);
       setGameState(newGameState);
-
       //TODO send move to backend
     }
   };
