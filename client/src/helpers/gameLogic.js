@@ -7,7 +7,21 @@ class GameLogic {
     this.dimension = dimension;
   }
 
-  executeMove(squareData, row, column, placedColor) {
+  executeMove(gameState, row, column) {
+    const squareData = gameState.squares;
+    const turn = gameState.turn;
+    let placedColor = gameState.playerColor;
+    if (!placedColor) {
+      //Singleplayer, placed color is always same as turn.
+      placedColor = turn;
+    }
+
+    console.log(turn, placedColor);
+    if (placedColor !== turn) {
+      //It's not your turn, no move allowed.
+      return null;
+    }
+
     const linearCoordinate = this.gridToLinear(row, column);
     //Check if target square is empty.
     if (squareData[linearCoordinate] !== null) {

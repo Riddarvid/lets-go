@@ -39,15 +39,7 @@ const MultiplayerGame = ({ squareSize }) => {
   }, [uuid]);
 
   const onSquareClicked = (row, column) => {
-    console.log("Clicked " + row + " " + column);
-    console.log(gameState);
-    const newSquareData = gameLogic.current.executeMove(
-      gameState.squares,
-      row,
-      column,
-      gameState.turn
-    );
-    console.log(newSquareData);
+    const newSquareData = gameLogic.current.executeMove(gameState, row, column);
     if (newSquareData !== null) {
       let newGameState = { ...gameState };
       newGameState.squares = newSquareData;

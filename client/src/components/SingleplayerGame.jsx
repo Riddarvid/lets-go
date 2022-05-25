@@ -5,23 +5,19 @@ import Board from "./Board";
 
 const SingleplayerGame = ({ squareSize }) => {
   const dimension = 19;
-  const [squareData, setSquareData] = useState(
-    Array(dimension * dimension).fill(null)
-  );
-  const [currentColor, setCurrentColor] = useState("black");
+  const [gameState, setGameState] = useState({
+    squares: Array(dimension * dimension).fill(null),
+    turn: "black",
+  });
   const gameLogic = useRef(new GameLogic(dimension));
 
   const onSquareClicked = (row, column) => {
-    const newSquareData = gameLogic.current.executeMove(
-      squareData,
-      row,
-      column,
-      currentColor
-    );
+    const newSquareData = gameLogic.current.executeMove(gameState, row, column);
     if (newSquareData !== null) {
-      setSquareData(newSquareData);
-      const newColor = getOppositeColor(currentColor);
-      setCurrentColor(newColor);
+      setGameState({
+        squares: newSquareData,
+        turn: getOppositeColor(gameState.turn),
+      });
     }
   };
 
@@ -30,10 +26,10 @@ const SingleplayerGame = ({ squareSize }) => {
       <Board
         dimension={dimension}
         squareSize={squareSize}
-        squareData={squareData}
+        squareData={gameState.squares}
         onSquareClicked={onSquareClicked}
       />
-      <Typography variant="h1">{currentColor + "'s turn"}</Typography>
+      <Typography variant="h1">{gameState.turn + "'s turn"}</Typography>
     </Stack>
   );
 };
