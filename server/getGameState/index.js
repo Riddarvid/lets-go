@@ -21,7 +21,7 @@ const handler = async (event) => {
   let response;
   try {
     const selectResponse = await client.query(
-      "SELECT squares, turn, color as playerColor FROM players LEFT JOIN game_state ON players.game_state_id = game_state.id WHERE uuid = $1",
+      "SELECT squares, turn, color FROM players LEFT JOIN game_state ON players.game_state_id = game_state.id WHERE uuid = $1",
       [uuid]
     );
     if (selectResponse.rowCount === 0) {

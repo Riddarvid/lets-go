@@ -12,7 +12,10 @@ const App = () => {
       <TopBar />
       <Routes>
         <Route index element={<Navigate to="/singleplayer" />} />
-        <Route path="/multiplayer/:uuid" element={<MultiplayerGame />} />
+        <Route
+          path="/multiplayer/:uuid"
+          element={<MultiplayerGame squareSize={squareSize} />}
+        />
         <Route
           path="/singleplayer"
           element={<SingleplayerGame squareSize={squareSize} />}

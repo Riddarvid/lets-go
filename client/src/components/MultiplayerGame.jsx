@@ -16,7 +16,6 @@ const MultiplayerGame = ({ squareSize }) => {
     const fetchGameState = async () => {
       const response = await fetch(backendUrl + "/game?uuid=" + uuid);
       const result = await response.json();
-      console.log(result);
       if (result.gameState) {
         const newGameState = { ...result.gameState };
         newGameState.squares = newGameState.squares.split("").map((n) => {
@@ -28,7 +27,7 @@ const MultiplayerGame = ({ squareSize }) => {
             return "white";
           }
         });
-        console.log(newGameState);
+        newGameState.dimension = Math.sqrt(newGameState.squares.length);
         setGameState(newGameState);
         gameLogic.current = new GameLogic(newGameState.dimension);
       }
@@ -53,13 +52,15 @@ const MultiplayerGame = ({ squareSize }) => {
   return (
     <Stack direction="row" spacing={2}>
       <Board
-        dimension={19}
+        dimension={gameState ? gameState.dimension : null}
         squareSize={squareSize}
         squareData={gameState ? gameState.squares : null}
         onSquareClicked={onSquareClicked}
       />
       <Typography variant="h1">
-        {gameState ? gameState.turn + "'s turn" : ""}
+        {gameState
+          ? gameState.turn + "'s turn. Playing as " + gameState.color + "."
+          : ""}
       </Typography>
     </Stack>
   );

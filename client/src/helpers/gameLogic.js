@@ -10,7 +10,7 @@ class GameLogic {
   executeMove(gameState, row, column) {
     const squareData = gameState.squares;
     const turn = gameState.turn;
-    let placedColor = gameState.playerColor;
+    let placedColor = gameState.color;
     if (!placedColor) {
       //Singleplayer, placed color is always same as turn.
       placedColor = turn;
