@@ -6,6 +6,8 @@ import {
   squaresToString,
   stringToSquares,
 } from "./gameLogic.js";
+import AWS from "aws-sdk";
+
 const { Client } = pg;
 
 const backendUrl =
@@ -28,10 +30,32 @@ try {
 
 const handler = async (event) => {
   //1. Select the correct game state using the getGameState lambda
+  console.log("Recieved request");
   let response = { headers: { "Access-Control-Allow-Origin": "*" } };
   try {
+    console.log(event.body);
     const { uuid, row, column } = JSON.parse(event.body);
-    let gameResponse = await fetch(backendUrl + "/game?uuid=" + uuid);
+    console.log("Fetching game");
+    const lambda = new AWS.Lambda();
+    const params = {
+      FunctionName: "getGameState",
+      LogType: "Tail",
+      Payload: JSON.stringify({
+        queryStringParameters: {
+          uuid: uuid,
+        },
+      }),
+    };
+    const gameResponse = await lambda
+      .invoke(params)
+      .promise()
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    console.log(gameResponse);
     if (!gameResponse.ok) {
       response.statusCode = 404;
       response.body = JSON.stringify({
@@ -39,6 +63,7 @@ const handler = async (event) => {
       });
       return response;
     }
+    console.log("Game fetched");
 
     const { gameState } = await gameResponse.json();
     gameState.squares = stringToSquares(gameState.squares);
@@ -49,15 +74,16 @@ const handler = async (event) => {
 
     //3. If the move was invalid, send an error response.
     if (newSquareData === null) {
+      console.log("Illegal move");
       response.statusCode = 404;
       response.body = JSON.stringify({
         error: "Illegal move",
       });
       return response;
     }
+    console.log("Legal move");
 
     const squareString = squaresToString(newSquareData);
-    console.log(squareString);
 
     const query =
       "UPDATE game_state " +
@@ -69,6 +95,7 @@ const handler = async (event) => {
     response.statusCode = 200;
     return response;
   } catch (e) {
+    console.log(e);
     response.statusCode = 400;
     response.body = JSON.stringify({
       error: e,

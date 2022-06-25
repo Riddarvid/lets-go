@@ -17,7 +17,9 @@ try {
 }
 
 const handler = async (event) => {
+  console.log("Request recieved");
   const uuid = event.queryStringParameters.uuid;
+  console.log(uuid);
   let response;
   try {
     const selectResponse = await client.query(
