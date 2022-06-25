@@ -1,9 +1,11 @@
-import { handler } from "./getGameState/index.js";
+import { handler } from "./makeMove/index.js";
 
-const queryStringParameters = {
-  uuid: "cb720910-a06b-4ec8-86e3-0a8c2a524482",
+const queryStringParameters = {};
+const body = {
+  uuid: "f792f80e-037f-46f6-8b9f-460d31431ec0",
+  row: 4,
+  column: 6,
 };
-const body = {};
 const event = {
   body: JSON.stringify(body),
   queryStringParameters: queryStringParameters,
@@ -12,6 +14,5 @@ const event = {
 handler(event)
   .then((response) => {
     console.log(response);
-    console.log(JSON.parse(response.body));
   })
   .catch((error) => console.log(error));
