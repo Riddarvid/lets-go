@@ -16,7 +16,6 @@ class GameLogic {
       placedColor = turn;
     }
 
-    console.log(turn, placedColor);
     if (placedColor !== turn) {
       //It's not your turn, no move allowed.
       return null;

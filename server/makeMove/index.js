@@ -1,5 +1,4 @@
 import pg from "pg";
-import fetch from "node-fetch";
 import {
   GameLogic,
   getOppositeColor,
@@ -9,9 +8,6 @@ import {
 import AWS from "aws-sdk";
 
 const { Client } = pg;
-
-const backendUrl =
-  "https://gqzmvnpow7.execute-api.eu-north-1.amazonaws.com/test";
 
 //TODO remove credentials
 const client = new Client({
@@ -30,42 +26,31 @@ try {
 
 const handler = async (event) => {
   //1. Select the correct game state using the getGameState lambda
-  console.log("Recieved request");
   let response = { headers: { "Access-Control-Allow-Origin": "*" } };
   try {
-    console.log(event.body);
     const { uuid, row, column } = JSON.parse(event.body);
-    console.log("Fetching game");
     const lambda = new AWS.Lambda();
     const params = {
-      FunctionName: "getGameState",
-      LogType: "Tail",
+      FunctionName:
+        "arn:aws:lambda:eu-north-1:596934412702:function:getGameState",
       Payload: JSON.stringify({
         queryStringParameters: {
           uuid: uuid,
         },
       }),
     };
-    const gameResponse = await lambda
-      .invoke(params)
-      .promise()
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    console.log(gameResponse);
-    if (!gameResponse.ok) {
+    const gameResponse = await lambda.invoke(params).promise();
+    const payload = JSON.parse(gameResponse.Payload);
+    const body = JSON.parse(payload.body);
+    if (payload.statusCode !== 200) {
       response.statusCode = 404;
       response.body = JSON.stringify({
         error: "No game with matching url found",
       });
       return response;
     }
-    console.log("Game fetched");
 
-    const { gameState } = await gameResponse.json();
+    const gameState = body.gameState;
     gameState.squares = stringToSquares(gameState.squares);
 
     //2. Try the move using gameLogic. If the move is valid, insert the new game state into the database. Send a positive response.
@@ -74,14 +59,12 @@ const handler = async (event) => {
 
     //3. If the move was invalid, send an error response.
     if (newSquareData === null) {
-      console.log("Illegal move");
       response.statusCode = 404;
       response.body = JSON.stringify({
         error: "Illegal move",
       });
       return response;
     }
-    console.log("Legal move");
 
     const squareString = squaresToString(newSquareData);
 
@@ -95,7 +78,6 @@ const handler = async (event) => {
     response.statusCode = 200;
     return response;
   } catch (e) {
-    console.log(e);
     response.statusCode = 400;
     response.body = JSON.stringify({
       error: e,
