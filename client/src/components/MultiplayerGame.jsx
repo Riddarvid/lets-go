@@ -44,6 +44,10 @@ const MultiplayerGame = ({ squareSize }) => {
       newGameState.squares = newSquareData;
       newGameState.turn = getOppositeColor(gameState.turn);
       setGameState(newGameState);
+      const postResponse = await fetch(backendUrl + "/move", {
+        method: "POST",
+      });
+      console.log(postResponse);
       //TODO send move to backend
     }
   };
