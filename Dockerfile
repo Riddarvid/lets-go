@@ -11,6 +11,7 @@ COPY client/ client/
 RUN npm run build --prefix client
 
 FROM nginx:stable-alpine
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /home/node/app/client/build/ /usr/share/nginx/html/
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
