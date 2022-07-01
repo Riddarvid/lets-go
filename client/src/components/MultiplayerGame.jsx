@@ -1,5 +1,5 @@
 import { Stack, Typography } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import {
   GameLogic,
@@ -16,22 +16,33 @@ const MultiplayerGame = ({ squareSize }) => {
   const [gameState, setGameState] = useState(null);
   const gameLogic = useRef(null);
 
-  useEffect(() => {
-    const fetchGameState = async () => {
-      const response = await fetch(backendUrl + "/game?uuid=" + uuid);
-      const result = await response.json();
-      if (result.gameState) {
-        const newGameState = { ...result.gameState };
-        newGameState.squares = stringToSquares(newGameState.squares);
-        newGameState.dimension = Math.sqrt(newGameState.squares.length);
-        setGameState(newGameState);
-        gameLogic.current = new GameLogic(newGameState.dimension);
-      }
-    };
-    if (uuid) {
-      fetchGameState();
+  const fetchGameState = useCallback(async () => {
+    if (!uuid) {
+      return;
     }
+    const response = await fetch(backendUrl + "/game?uuid=" + uuid);
+    const result = await response.json();
+    if (!result.gameState) {
+      return;
+    }
+    const newGameState = { ...result.gameState };
+    newGameState.squares = stringToSquares(newGameState.squares);
+    newGameState.dimension = Math.sqrt(newGameState.squares.length);
+    setGameState(newGameState);
+    gameLogic.current = new GameLogic(newGameState.dimension);
   }, [uuid]);
+
+  useEffect(() => {
+    fetchGameState();
+  }, [uuid, fetchGameState]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchGameState();
+    }, 10 * 1000); //Refresh every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [fetchGameState]);
 
   const onSquareClicked = async (row, column) => {
     const newSquareData = gameLogic.current.executeMove(gameState, row, column);
@@ -40,7 +51,7 @@ const MultiplayerGame = ({ squareSize }) => {
       newGameState.squares = newSquareData;
       newGameState.turn = getOppositeColor(gameState.turn);
       setGameState(newGameState);
-      const postResponse = await fetch(backendUrl + "/move", {
+      await fetch(backendUrl + "/move", {
         method: "POST",
         body: JSON.stringify({
           uuid,
@@ -48,8 +59,6 @@ const MultiplayerGame = ({ squareSize }) => {
           column,
         }),
       });
-      console.log(postResponse);
-      //TODO send move to backend
     }
   };
 
