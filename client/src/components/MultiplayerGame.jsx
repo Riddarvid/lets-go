@@ -39,7 +39,7 @@ const MultiplayerGame = ({ squareSize }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchGameState();
-    }, 10 * 1000); //Refresh every 10 seconds
+    }, 2 * 1000); //Refresh every 2 seconds
 
     return () => clearInterval(interval);
   }, [fetchGameState]);
