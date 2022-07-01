@@ -16,7 +16,6 @@ class GameLogic {
       placedColor = turn;
     }
 
-    console.log(turn, placedColor);
     if (placedColor !== turn) {
       //It's not your turn, no move allowed.
       return null;
@@ -135,4 +134,30 @@ class GameLogic {
   }
 }
 
-export { GameLogic, getOppositeColor };
+const squaresToString = (squares) => {
+  let squareString = "";
+  squares.forEach((square) => {
+    if (square === null) {
+      squareString += "0";
+    } else if (square === "white") {
+      squareString += "1";
+    } else {
+      squareString += "2";
+    }
+  });
+  return squareString;
+};
+
+const stringToSquares = (squareString) => {
+  return squareString.split("").map((n) => {
+    if (n === "0") {
+      return null;
+    } else if (n === "1") {
+      return "white";
+    } else {
+      return "black";
+    }
+  });
+};
+
+export { GameLogic, getOppositeColor, squaresToString, stringToSquares };

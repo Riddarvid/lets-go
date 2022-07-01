@@ -1,7 +1,11 @@
 import { Stack, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { GameLogic, getOppositeColor } from "../helpers/gameLogic";
+import {
+  GameLogic,
+  getOppositeColor,
+  stringToSquares,
+} from "../helpers/gameLogic";
 import Board from "./Board";
 
 const backendUrl =
@@ -18,15 +22,7 @@ const MultiplayerGame = ({ squareSize }) => {
       const result = await response.json();
       if (result.gameState) {
         const newGameState = { ...result.gameState };
-        newGameState.squares = newGameState.squares.split("").map((n) => {
-          if (n === "0") {
-            return null;
-          } else if (n === "1") {
-            return "black";
-          } else {
-            return "white";
-          }
-        });
+        newGameState.squares = stringToSquares(newGameState.squares);
         newGameState.dimension = Math.sqrt(newGameState.squares.length);
         setGameState(newGameState);
         gameLogic.current = new GameLogic(newGameState.dimension);
@@ -46,6 +42,11 @@ const MultiplayerGame = ({ squareSize }) => {
       setGameState(newGameState);
       const postResponse = await fetch(backendUrl + "/move", {
         method: "POST",
+        body: JSON.stringify({
+          uuid,
+          row,
+          column,
+        }),
       });
       console.log(postResponse);
       //TODO send move to backend

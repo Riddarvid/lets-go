@@ -51,6 +51,7 @@ const handler = async (event) => {
     }
 
     const gameState = body.gameState;
+    console.log(gameState);
     gameState.squares = stringToSquares(gameState.squares);
 
     //2. Try the move using gameLogic. If the move is valid, insert the new game state into the database. Send a positive response.

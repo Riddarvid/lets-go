@@ -1,10 +1,8 @@
-import { handler } from "./makeMove/index.js";
+import { handler } from "./createGame/index.js";
 
 const queryStringParameters = {};
 const body = {
-  uuid: "f792f80e-037f-46f6-8b9f-460d31431ec0",
-  row: 4,
-  column: 6,
+  dimension: 19,
 };
 const event = {
   body: JSON.stringify(body),

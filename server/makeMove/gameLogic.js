@@ -153,9 +153,9 @@ const stringToSquares = (squareString) => {
     if (n === "0") {
       return null;
     } else if (n === "1") {
-      return "black";
-    } else {
       return "white";
+    } else {
+      return "black";
     }
   });
 };
