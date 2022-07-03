@@ -19,36 +19,44 @@ try {
 const handler = async (event) => {
   console.log("Request recieved");
   const uuid = event.queryStringParameters.uuid;
-  console.log(uuid);
-  let response;
+
+  let response = { headers: { "Access-Control-Allow-Origin": "*" } };
   try {
-    const selectResponse = await client.query(
-      "SELECT squares, turn, color FROM players LEFT JOIN game_state ON players.game_state_id = game_state.id WHERE uuid = $1",
-      [uuid]
-    );
-    if (selectResponse.rowCount === 0) {
+    const gameState = await getGameState(uuid);
+    if (gameState === null) {
       response = {
+        ...response,
         statusCode: 404,
         body: JSON.stringify({ error: "No game with matching url found" }),
       };
     } else {
       response = {
+        ...response,
         statusCode: 200,
-        body: JSON.stringify({ gameState: selectResponse.rows[0] }),
+        body: JSON.stringify({ gameState: gameState }),
       };
     }
+    return response;
   } catch (error) {
     console.log(error);
     response = {
+      ...response,
       statusCode: 500,
       body: JSON.stringify("Error executing query"),
     };
-  } finally {
-    response = {
-      ...response,
-      headers: { "Access-Control-Allow-Origin": "*" },
-    };
     return response;
+  }
+};
+
+const getGameState = async (uuid) => {
+  const selectResponse = await client.query(
+    "SELECT squares, turn, color FROM players LEFT JOIN game_state ON players.game_state_id = game_state.id WHERE uuid = $1",
+    [uuid]
+  );
+  if (selectResponse.rowCount === 0) {
+    return null;
+  } else {
+    return selectResponse.rows[0];
   }
 };
 

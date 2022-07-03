@@ -5,7 +5,6 @@ import {
   squaresToString,
   stringToSquares,
 } from "./gameLogic.js";
-import AWS from "aws-sdk";
 
 const { Client } = pg;
 
@@ -29,29 +28,19 @@ const handler = async (event) => {
   let response = { headers: { "Access-Control-Allow-Origin": "*" } };
   try {
     const { uuid, row, column } = JSON.parse(event.body);
-    const lambda = new AWS.Lambda();
-    const params = {
-      FunctionName:
-        "arn:aws:lambda:eu-north-1:596934412702:function:getGameState",
-      Payload: JSON.stringify({
-        queryStringParameters: {
-          uuid: uuid,
-        },
-      }),
-    };
-    const gameResponse = await lambda.invoke(params).promise();
-    const payload = JSON.parse(gameResponse.Payload);
-    const body = JSON.parse(payload.body);
-    if (payload.statusCode !== 200) {
-      response.statusCode = 404;
-      response.body = JSON.stringify({
-        error: "No game with matching url found",
-      });
+
+    const gameState = await getGameState(uuid);
+    if (gameState === null) {
+      response = {
+        ...response,
+        statusCode: 404,
+        body: JSON.stringify({
+          error: "No game with matching url found",
+        }),
+      };
       return response;
     }
 
-    const gameState = body.gameState;
-    console.log(gameState);
     gameState.squares = stringToSquares(gameState.squares);
 
     //2. Try the move using gameLogic. If the move is valid, insert the new game state into the database. Send a positive response.
@@ -60,10 +49,13 @@ const handler = async (event) => {
 
     //3. If the move was invalid, send an error response.
     if (newSquareData === null) {
-      response.statusCode = 404;
-      response.body = JSON.stringify({
-        error: "Illegal move",
-      });
+      response = {
+        ...response,
+        statusCode: 400,
+        body: JSON.stringify({
+          error: "Illegal move",
+        }),
+      };
       return response;
     }
 
@@ -85,6 +77,18 @@ const handler = async (event) => {
       message: "Something went wrong",
     });
     return response;
+  }
+};
+
+const getGameState = async (uuid) => {
+  const selectResponse = await client.query(
+    "SELECT squares, turn, color FROM players LEFT JOIN game_state ON players.game_state_id = game_state.id WHERE uuid = $1",
+    [uuid]
+  );
+  if (selectResponse.rowCount === 0) {
+    return null;
+  } else {
+    return selectResponse.rows[0];
   }
 };
 
