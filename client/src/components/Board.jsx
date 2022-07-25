@@ -2,10 +2,12 @@ import { Box, Stack } from "@mui/material";
 import BoardRow from "./BoardRow";
 import { pixels } from "../helpers/helpers";
 
-const Board = ({ dimension, squareSize, squareData, onSquareClicked }) => {
+const Board = ({ dimension, boardSize, squareData, onSquareClicked }) => {
   if (squareData === null) {
     return null;
   }
+
+  const squareSize = boardSize / dimension;
 
   const renderBoardRows = () => {
     let boardRows = [];

@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 import { GameLogic, getOppositeColor } from "../helpers/gameLogic";
 import Board from "./Board";
 
-const SingleplayerGame = ({ squareSize }) => {
+const SingleplayerGame = ({ boardSize }) => {
   const dimension = 19;
   const [gameState, setGameState] = useState({
     squares: Array(dimension * dimension).fill(null),
@@ -25,7 +25,7 @@ const SingleplayerGame = ({ squareSize }) => {
     <Stack direction="row" spacing={2}>
       <Board
         dimension={dimension}
-        squareSize={squareSize}
+        boardSize={boardSize}
         squareData={gameState.squares}
         onSquareClicked={onSquareClicked}
       />

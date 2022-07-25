@@ -11,7 +11,7 @@ import Board from "./Board";
 const backendUrl =
   "https://gqzmvnpow7.execute-api.eu-north-1.amazonaws.com/test";
 
-const MultiplayerGame = ({ squareSize }) => {
+const MultiplayerGame = ({ boardSize }) => {
   const { uuid } = useParams();
   const [gameState, setGameState] = useState(null);
   const gameLogic = useRef(null);
@@ -66,7 +66,7 @@ const MultiplayerGame = ({ squareSize }) => {
     <Stack direction="row" spacing={2}>
       <Board
         dimension={gameState ? gameState.dimension : null}
-        squareSize={squareSize}
+        boardSize={boardSize}
         squareData={gameState ? gameState.squares : null}
         onSquareClicked={onSquareClicked}
       />
