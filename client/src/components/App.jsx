@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import React, { useState } from "react";
-=======
 import React, { useRef, useState } from "react";
->>>>>>> git-error
 import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import MultiplayerGame from "./MultiplayerGame";
@@ -11,14 +7,6 @@ import TopBar from "./TopBar";
 
 const App = () => {
   const [boardSize, setBoardSize] = useState(null);
-<<<<<<< HEAD
-
-  useEffect(() => {
-    let [windowWidth, windowHeight] = [window.innerWidth, window.outerHeight];
-    const smallestSide =
-      windowWidth < windowHeight ? windowWidth : windowHeight;
-    setBoardSize(smallestSide * 0.65);
-=======
   const dimension = useRef(19);
 
   useEffect(() => {
@@ -32,7 +20,6 @@ const App = () => {
     }
     console.log(smallestSide);
     setBoardSize(smallestSide);
->>>>>>> git-error
   }, []);
 
   return (
