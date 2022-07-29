@@ -1,37 +1,11 @@
-import { Stack, Typography } from "@mui/material";
-import React, { useRef, useState } from "react";
-import { GameLogic, getOppositeColor } from "../helpers/gameLogic";
-import Board from "./Board";
+import React from "react";
+import useSinglePlayerGameEngine from "../hooks/SinglePlayerGameEngine";
+import Game from "./Game";
 
-const SingleplayerGame = ({ boardSize }) => {
-  const dimension = 19;
-  const [gameState, setGameState] = useState({
-    squares: Array(dimension * dimension).fill(null),
-    turn: "black",
-  });
-  const gameLogic = useRef(new GameLogic(dimension));
+const SingleplayerGame = ({ dimension, boardSize }) => {
+  const gameEngine = useSinglePlayerGameEngine({ dimension });
 
-  const onSquareClicked = (row, column) => {
-    const newSquareData = gameLogic.current.executeMove(gameState, row, column);
-    if (newSquareData !== null) {
-      setGameState({
-        squares: newSquareData,
-        turn: getOppositeColor(gameState.turn),
-      });
-    }
-  };
-
-  return (
-    <Stack direction="row" spacing={2}>
-      <Board
-        dimension={dimension}
-        boardSize={boardSize}
-        squareData={gameState.squares}
-        onSquareClicked={onSquareClicked}
-      />
-      <Typography variant="h1">{gameState.turn + "'s turn"}</Typography>
-    </Stack>
-  );
+  return <Game boardSize={boardSize} gameEngine={gameEngine} />;
 };
 
 export default SingleplayerGame;
