@@ -1,0 +1,17 @@
+{
+  "name": "makemove",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1162.0",
+    "node-fetch": "^3.2.6",
+    "pg": "^8.7.3"
+  }
+}
