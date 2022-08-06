@@ -9,3 +9,4 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 - Remove secrets from code. How to do this?
 - Add functionality for creating a new game
 - Add a detectOpponentMove function to reduce the amount of data needed to be fetched.
+- Add zoom buttons
