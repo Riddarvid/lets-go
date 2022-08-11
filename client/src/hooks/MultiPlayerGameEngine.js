@@ -20,6 +20,7 @@ const useMultiPlayerGameEngine = ({ dimension, uuid }) => {
       const response = await fetch(backendUrl + "/game?uuid=" + uuid);
       const result = await response.json();
       if (!result.gameState) {
+        setGameState({ error: true });
         return;
       }
       const newGameState = { ...result.gameState };

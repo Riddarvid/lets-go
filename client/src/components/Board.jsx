@@ -8,7 +8,6 @@ const Board = ({ dimension, boardSize, squareData, onSquareClicked }) => {
   }
 
   const squareSize = boardSize / (dimension + 1);
-  console.log(squareSize);
 
   const renderBoardRows = () => {
     let boardRows = [];
