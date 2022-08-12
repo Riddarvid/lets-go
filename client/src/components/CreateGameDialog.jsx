@@ -1,4 +1,13 @@
-import { Dialog, DialogTitle, Typography } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Link,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { Box } from "@mui/system";
 import { useSnackbar } from "notistack";
 import { useState, useEffect } from "react";
 
@@ -41,8 +50,12 @@ const CreateGameDialog = ({ open, handleClose }) => {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>New game created!</DialogTitle>
-      <Typography>{"Blacks's link: " + userIDs.blackUUID}</Typography>
-      <Typography>{"White's link: " + userIDs.whiteUUID}</Typography>
+      <DialogContent>
+        <Stack>
+          <Button href={`/multiplayer/${userIDs.blackUUID}`}>Black</Button>
+          <Button href={`/multiplayer/${userIDs.whiteUUID}`}>White</Button>
+        </Stack>
+      </DialogContent>
     </Dialog>
   );
 };
