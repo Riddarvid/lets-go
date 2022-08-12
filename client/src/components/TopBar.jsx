@@ -3,19 +3,28 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import { Menu, Typography, MenuItem, Stack, Button } from "@mui/material";
 import { useState } from "react";
+import CreateGameDialog from "./CreateGameDialog";
 
 const TopBar = () => {
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
-  const handleMenu = (event) => {
+  const openMenu = (event) => {
     setMenuAnchor(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const closeMenu = () => {
     setMenuAnchor(null);
   };
 
-  const handleCreateGame = () => {};
+  const handleCreateGame = () => {
+    setCreateDialogOpen(true);
+    closeMenu();
+  };
+
+  const handleCreateGameClose = () => {
+    setCreateDialogOpen(false);
+  };
 
   return (
     <React.Fragment>
@@ -35,25 +44,29 @@ const TopBar = () => {
             >
               Let's Go
             </Typography>
-            <Button variant="text" onClick={handleMenu} color="inherit">
+            <Button variant="text" onClick={openMenu} color="inherit">
               Multiplayer
             </Button>
             <Menu
               id="menu-appbar"
               anchorEl={menuAnchor}
               anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
+                vertical: "bottom",
+                horizontal: "left",
               }}
               keepMounted
               transformOrigin={{
                 vertical: "top",
-                horizontal: "right",
+                horizontal: "left",
               }}
               open={Boolean(menuAnchor)}
-              onClose={handleClose}
+              onClose={closeMenu}
             >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
+              <MenuItem onClick={handleCreateGame}>Create new game</MenuItem>
+              <CreateGameDialog
+                open={createDialogOpen}
+                handleClose={handleCreateGameClose}
+              />
             </Menu>
           </Stack>
         </Toolbar>
