@@ -35,6 +35,7 @@ const handler = async (event) => {
       body: JSON.stringify("Error executing query"),
     };
   } finally {
+    response.headers = { "Access-Control-Allow-Origin": "*" };
     return response;
   }
 };
