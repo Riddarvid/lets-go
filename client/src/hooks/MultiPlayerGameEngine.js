@@ -11,6 +11,7 @@ const backendUrl =
 const useMultiPlayerGameEngine = ({ dimension, uuid }) => {
   const [gameState, setGameState] = useState(null);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
   const gameLogic = useRef(null);
 
   const fetchGameState = useCallback(async () => {
@@ -28,6 +29,7 @@ const useMultiPlayerGameEngine = ({ dimension, uuid }) => {
       newGameState.squares = stringToSquares(newGameState.squares);
       newGameState.dimension = Math.sqrt(newGameState.squares.length);
       setGameState(newGameState);
+      setLoading(false);
       gameLogic.current = new GameLogic(newGameState.dimension);
     } catch (error) {
       console.log("Error fetching multiplayer game");
@@ -64,7 +66,7 @@ const useMultiPlayerGameEngine = ({ dimension, uuid }) => {
     }
   };
 
-  return { gameState, onSquareClicked, dimension, error };
+  return { gameState, onSquareClicked, dimension, error, loading };
 };
 
 export default useMultiPlayerGameEngine;
