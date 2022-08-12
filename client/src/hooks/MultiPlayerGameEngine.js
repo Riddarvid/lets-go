@@ -10,6 +10,7 @@ const backendUrl =
 
 const useMultiPlayerGameEngine = ({ dimension, uuid }) => {
   const [gameState, setGameState] = useState(null);
+  const [error, setError] = useState(false);
   const gameLogic = useRef(null);
 
   const fetchGameState = useCallback(async () => {
@@ -20,7 +21,7 @@ const useMultiPlayerGameEngine = ({ dimension, uuid }) => {
       const response = await fetch(backendUrl + "/game?uuid=" + uuid);
       const result = await response.json();
       if (!result.gameState) {
-        setGameState({ error: true });
+        setError(true);
         return;
       }
       const newGameState = { ...result.gameState };
@@ -63,7 +64,7 @@ const useMultiPlayerGameEngine = ({ dimension, uuid }) => {
     }
   };
 
-  return { gameState, onSquareClicked, dimension };
+  return { gameState, onSquareClicked, dimension, error };
 };
 
 export default useMultiPlayerGameEngine;
