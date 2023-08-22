@@ -2,20 +2,15 @@ import {
   ApiGatewayManagementApiClient,
   PostToConnectionCommand,
 } from "@aws-sdk/client-apigatewaymanagementapi";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
-//DB connection outside handler for sharing
-const client = new DynamoDBClient({});
-const docClient = DynamoDBDocumentClient.from(client);
-
-const getGameFromDb = () => {};
-
-export const handler = async (event, context) => {
-  const body = JSON.parse(event.body);
-  console.log(body);
-
-  //const game = getGameFromDb(uuid);
+export const handler = async (event) => {
+  let body;
+  try {
+    body = JSON.parse(event.body);
+  } catch {
+    body = event.body;
+  }
+  console.log("Default route invoked. Body: ", body);
 
   //Establish callback url
   const domain = event.requestContext.domainName;
@@ -25,9 +20,10 @@ export const handler = async (event, context) => {
 
   const command = new PostToConnectionCommand({
     ConnectionId: event.requestContext.connectionId, //Send back to sender
-    Data: `Tjenare på dig, verkar som att du skrev: ${event.body}`,
+    Data: JSON.stringify({
+      response: `Unrecognized action: ${body?.action}`,
+    }),
   });
-
   try {
     await client.send(command);
   } catch (error) {
@@ -36,7 +32,6 @@ export const handler = async (event, context) => {
       statusCode: 500,
     };
   }
-  console.log("Success!");
   return {
     statusCode: 200,
   };
