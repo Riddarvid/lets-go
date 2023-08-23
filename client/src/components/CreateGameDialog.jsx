@@ -3,16 +3,13 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Link,
   Stack,
-  Typography,
 } from "@mui/material";
-import { Box } from "@mui/system";
 import { useSnackbar } from "notistack";
 import { useState, useEffect } from "react";
 
-const backendUrl =
-  "https://gqzmvnpow7.execute-api.eu-north-1.amazonaws.com/test";
+const apiUrl =
+  "wss://b93z3z9h0c.execute-api.eu-north-1.amazonaws.com/production";
 
 const CreateGameDialog = ({ open, handleClose }) => {
   const [userIDs, setUserIDs] = useState(null);
@@ -21,14 +18,25 @@ const CreateGameDialog = ({ open, handleClose }) => {
   useEffect(() => {
     const createGame = async () => {
       try {
-        const response = await fetch(backendUrl + "/game", {
-          method: "POST",
-          body: JSON.stringify({
-            dimension: 19,
-          }),
-        });
-        const body = await response.json();
-        setUserIDs(body);
+        console.log("Creating ws");
+        const ws = new WebSocket(apiUrl);
+        ws.onopen = () => {
+          console.log("Sending create game request");
+          ws.send(
+            JSON.stringify({
+              action: "createGame",
+              size: 19,
+            })
+          );
+        };
+        ws.onmessage = (event) => {
+          console.log("Response received", event);
+          const message = JSON.parse(event.data);
+          if (message.type === "game-created") {
+            console.log("Updating state");
+            setUserIDs(message.data);
+          }
+        };
       } catch (error) {
         enqueueSnackbar("Something went wrong, please try again.", {
           variant: "error",
@@ -43,6 +51,7 @@ const CreateGameDialog = ({ open, handleClose }) => {
     }
   }, [open, handleClose, enqueueSnackbar]);
 
+  console.log(userIDs);
   if (!userIDs) {
     return null;
   }
@@ -52,8 +61,8 @@ const CreateGameDialog = ({ open, handleClose }) => {
       <DialogTitle>New game created!</DialogTitle>
       <DialogContent>
         <Stack>
-          <Button href={`/multiplayer/${userIDs.blackUUID}`}>Black</Button>
-          <Button href={`/multiplayer/${userIDs.whiteUUID}`}>White</Button>
+          <Button href={`/multiplayer/${userIDs.blackId}`}>Black</Button>
+          <Button href={`/multiplayer/${userIDs.whiteId}`}>White</Button>
         </Stack>
       </DialogContent>
     </Dialog>

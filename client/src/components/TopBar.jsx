@@ -28,6 +28,10 @@ const TopBar = () => {
 
   return (
     <React.Fragment>
+      <CreateGameDialog
+        open={createDialogOpen}
+        handleClose={handleCreateGameClose}
+      />
       <AppBar sx={{ width: "100%" }}>
         <Toolbar>
           <Stack direction="row" spacing={3}>
@@ -63,10 +67,6 @@ const TopBar = () => {
               onClose={closeMenu}
             >
               <MenuItem onClick={handleCreateGame}>Create new game</MenuItem>
-              <CreateGameDialog
-                open={createDialogOpen}
-                handleClose={handleCreateGameClose}
-              />
             </Menu>
           </Stack>
         </Toolbar>

@@ -22,7 +22,9 @@ const createGame = async (size) => {
     Item: {
       GameId: gameId,
       BlackId: blackId,
+      BlackConnId: "",
       WhiteId: whiteId,
+      WhiteConnId: "",
       BlackTurn: true,
       SquareData: Array(size * size)
         .fill(0)
@@ -70,7 +72,7 @@ export const handler = async (event, context) => {
   }
 
   try {
-    notifyCreator(event, ids);
+    await notifyCreator(event, ids);
   } catch (error) {
     console.error("Error notifying creator.");
     return {
