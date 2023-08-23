@@ -17,8 +17,8 @@ const useMultiPlayerGameEngine = ({ dimension, uuid }) => {
 
   useEffect(() => {
     if (ws === null) {
-      ws = new WebSocket(apiUrl);
-      ws.onmessage = (event) => {
+      const newWs = new WebSocket(apiUrl);
+      newWs.onmessage = (event) => {
         const msg = JSON.parse(event.data);
         switch (msg.type) {
           case "game-state":
@@ -33,21 +33,21 @@ const useMultiPlayerGameEngine = ({ dimension, uuid }) => {
             break;
         }
       };
-      ws.onopen = () => {
-        ws.send(
+      newWs.onopen = () => {
+        newWs.send(
           JSON.stringify({
             action: "registerConnection",
             uuid: uuid,
           })
         );
-        ws.send(
+        newWs.send(
           JSON.stringify({
             action: "getGame",
             uuid: uuid,
           })
         );
       };
-      setWs(ws);
+      setWs(newWs);
     }
   }, [ws, uuid]);
 
