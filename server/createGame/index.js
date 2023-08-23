@@ -10,7 +10,7 @@ import {
 const dbClient = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(dbClient);
 
-//Everything breaks if there is a solution. Will probably have to use a real RDS
+//Everything breaks if there is a collision. Will probably have to use a real RDS
 //to be able to avoid this.
 const createGame = async (size) => {
   const gameId = crypto.randomUUID();

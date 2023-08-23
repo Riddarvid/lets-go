@@ -10,7 +10,7 @@ const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
 const getGameFromDb = async (uuid) => {
-  const command = new QueryCommand({
+  const blackCommand = new QueryCommand({
     TableName: process.env.TABLE,
     IndexName: "BlackId-index",
     KeyConditionExpression: "BlackId = :id",
@@ -19,9 +19,28 @@ const getGameFromDb = async (uuid) => {
     },
   });
 
-  const response = await docClient.send(command);
+  let response = await docClient.send(blackCommand);
   console.log(response);
-  return response;
+  if (response.Count > 0) {
+    return response.Items[0];
+  }
+
+  const whiteCommand = new QueryCommand({
+    TableName: process.env.TABLE,
+    IndexName: "WhiteId-index",
+    KeyConditionExpression: "WhiteId = :id",
+    ExpressionAttributeValues: {
+      ":id": uuid,
+    },
+  });
+
+  response = await docClient.send(whiteCommand);
+  console.log(response);
+  if (response.Count > 0) {
+    return response.Items[0];
+  }
+
+  return null;
 };
 
 export const handler = async (event, context) => {
@@ -52,7 +71,6 @@ export const handler = async (event, context) => {
       statusCode: 500,
     };
   }
-  console.log("Success!");
   return {
     statusCode: 200,
   };
