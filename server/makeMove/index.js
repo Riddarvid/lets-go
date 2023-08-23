@@ -63,8 +63,7 @@ const updateGameData = async (gameId, squareString, blackTurn) => {
   });
 
   const response = await docClient.send(command);
-  console.log(response);
-  return response;
+  return response.Attributes;
 };
 
 const notifyOpponent = async (event, gameEntry) => {
@@ -73,11 +72,13 @@ const notifyOpponent = async (event, gameEntry) => {
   const stage = event.requestContext.stage;
   const callbackUrl = `https://${domain}/${stage}`; //Same api as message was received from.
   const client = new ApiGatewayManagementApiClient({ endpoint: callbackUrl });
+  console.log(gameEntry);
 
   const connectionId = gameEntry.BlackTurn
     ? gameEntry.BlackConnId
     : gameEntry.WhiteConnId;
 
+  console.log(connectionId);
   if (!connectionId) {
     return;
   }
@@ -156,6 +157,7 @@ export const handler = async (event) => {
       error: error,
     };
   }
+  console.log("Successfully notified opponent");
   return {
     statusCode: 200,
   };

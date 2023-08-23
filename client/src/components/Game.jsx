@@ -16,7 +16,7 @@ const Game = ({ boardSize, gameEngine }) => {
       <Board
         dimension={dimension}
         boardSize={boardSize}
-        squareData={gameState.squares}
+        squareData={gameState.squareData}
         onSquareClicked={onSquareClicked}
       />
       <Typography variant="h1">{gameState.turn + "'s turn"}</Typography>

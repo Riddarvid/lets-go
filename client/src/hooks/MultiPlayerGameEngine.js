@@ -16,18 +16,23 @@ const useMultiPlayerGameEngine = ({ dimension, uuid }) => {
   const [ws, setWs] = useState(null);
 
   useEffect(() => {
-    if (ws === null) {
+    if (uuid !== null) {
       const newWs = new WebSocket(apiUrl);
       newWs.onmessage = (event) => {
+        console.log(event);
         const msg = JSON.parse(event.data);
         switch (msg.type) {
           case "game-state":
-            const newGameState = { ...msg.data };
-            newGameState.squares = stringToSquares(newGameState.squares);
-            newGameState.dimension = Math.sqrt(newGameState.squares.length);
-            setGameState(newGameState);
+            const gameEntry = { ...msg.data };
+            const gameData = {
+              squareData: stringToSquares(gameEntry.SquareData),
+              turn: gameEntry.BlackTurn ? "black" : "white",
+              placedColor: gameEntry.BlackId === uuid ? "black" : "white",
+            };
+            const dimension = Math.sqrt(gameData.squareData.length);
+            setGameState(gameData);
             setLoading(false);
-            gameLogic.current = new GameLogic(newGameState.dimension);
+            gameLogic.current = new GameLogic(dimension);
             break;
           default:
             break;
@@ -49,17 +54,19 @@ const useMultiPlayerGameEngine = ({ dimension, uuid }) => {
       };
       setWs(newWs);
     }
-  }, [ws, uuid]);
+  }, [uuid]);
 
   const onSquareClicked = async (row, column) => {
     const newSquareData = gameLogic.current.executeMove(gameState, row, column);
     if (newSquareData !== null) {
       let newGameState = { ...gameState };
-      newGameState.squares = newSquareData;
+      newGameState.squareData = newSquareData;
       newGameState.turn = getOppositeColor(gameState.turn);
       setGameState(newGameState);
+      console.log("Attempting to send message, ws:", ws);
       ws.send(
         JSON.stringify({
+          action: "makeMove",
           uuid,
           row,
           column,

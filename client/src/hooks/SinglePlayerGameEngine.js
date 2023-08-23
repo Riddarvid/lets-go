@@ -4,7 +4,7 @@ import { GameLogic, getOppositeColor } from "../helpers/gameLogic";
 const useSinglePlayerGameEngine = ({ dimension }) => {
   const gameLogic = useRef(new GameLogic(dimension));
   const [gameState, setGameState] = useState({
-    squares: Array(dimension * dimension).fill(null),
+    squareData: Array(dimension * dimension).fill(null),
     turn: "black",
   });
 
@@ -12,7 +12,7 @@ const useSinglePlayerGameEngine = ({ dimension }) => {
     const newSquareData = gameLogic.current.executeMove(gameState, row, column);
     if (newSquareData !== null) {
       setGameState({
-        squares: newSquareData,
+        squareData: newSquareData,
         turn: getOppositeColor(gameState.turn),
       });
     }
